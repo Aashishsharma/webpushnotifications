@@ -4,6 +4,8 @@ var routes = require('./routes');
 var bodyParser = require('body-parser')
 const webpush = require('web-push');
 var MongoClient = require("mongodb");
+var schedule = require('node-schedule');
+
 
 const vapidKeys = {
   publicKey:
@@ -16,6 +18,32 @@ var MONGOLAB_URI = "mongodb://test:test123@ds233452.mlab.com:33452/subscription-
 
 const path = require('path');
 const PORT = process.env.PORT || 5000
+
+//Batch processing
+/*var j = schedule.scheduleJob('* * * * *', function(fireDate){
+  console.log('This job was supposed to run at ' + fireDate + ', but actually ran at ' + new Date());
+  MongoClient.connect(MONGOLAB_URI, function(err, db){
+  if(err){
+    console.log(err);
+  }
+  const myAwesomeDB = db.db('subscription-datastore');
+  console.log('Inside retrieve DB');
+  var cursor = myAwesomeDB.collection('WebPushRequest').find();
+  cursor.each(function(err, doc){
+    if(doc){
+      console.log(doc);
+      console.log("data found");
+      for(var eid in doc.eids){
+       var req = {appid : doc.appid, header: doc.header, category:doc.category, eid : doc.eids[eid], message:doc.message, url:doc.url };
+       console.log(req);
+     }
+    }
+  });
+});
+
+});
+*/
+
 app.get('/ashish', function (req, res) {
    res.send('Hello World');
 })
@@ -152,6 +180,19 @@ function retrievefromDBBasedOn(req) {
 });
 }
 
+function sendNotification(req){
+     webpush.setVapidDetails(
+  'mailto:ashishrsharma2@gmail.com',
+  vapidKeys.publicKey,
+  vapidKeys.privateKey
+);
+  
+  var reqbody = req.body;
+  console.log(reqbody.appid);
+
+  retrievefromDBBasedOn(reqbody);
+}
+
 
 app.post('/api/send-subscription/', function (req, res) {
 
@@ -209,5 +250,3 @@ app.post('/api/save-subscription/', function (req, res) {
   });*/
 });
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`));
-
-
