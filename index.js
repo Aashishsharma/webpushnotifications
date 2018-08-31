@@ -170,47 +170,49 @@
                  "eid": req.eid
              });
              cursor.each(function(err, doc) {
+                 if (doc) {
+                     console.log(doc.eid);
+                     console.log("finding data for eid");
+                     console.log(doc.pfgStatCookie);
+                     console.log(req.category);
+                     var cursor1 = myAwesomeDB.collection('UserPreferences').find({
+                         "userPreferences.pfgStatCookie": {
+                             "$in": [doc.pfgStatCookie]
+                         },
+                         "userPreferences.categories": {
+                             "$in": [req.category]
+                         }
+                     });
+                     cursor1.each(function(err, doc) {
+                         if (doc) {
+                             console.log("finding data");
+                             console.log(doc.ref_id);
+                             var cursor2 = myAwesomeDB.collection('Subscription').find({
+                                 "_id": {
+                                     "$in": [doc.ref_id]
+                                 }
+                             });
+                             cursor2.each(function(err, doc) {
+                                 if (doc) {
+                                     console.log("finding data");
+                                     console.log("data", doc);
+                                     var newData = {
+                                         header: req.header,
+                                         message: req.message,
+                                         url: req.url
+                                     };
+                                     console.log("Sending message :" + newData);
+                                     triggerPushMsg(doc, JSON.stringify(newData));
+                                 }
 
+                             });
+                         }
+
+                     });
+                 }
              });
-             if (doc) {
-                 console.log("finding data for eid");
-                 console.log(doc.pfgStatCookie);
-                 var cursor1 = myAwesomeDB.collection('UserPreferences').find({
-                     "userPreferences.pfgStatCookie": {
-                         "$in": [doc.pfgStatCookie]
-                     },
-                     "userPreferences.categories": {
-                         "$in": [doc.category]
-                     }
-                 });
-                 cursor1.each(function(err, doc) {
-                     if (doc) {
-                         console.log("finding data");
-                         console.log(doc.ref_id);
-                         var cursor2 = myAwesomeDB.collection('Subscription').find({
-                             "_id": {
-                                 "$in": [doc.ref_id]
-                             }
-                         });
-                         cursor2.each(function(err, doc) {
-                             if (doc) {
-                                 console.log("finding data");
-                                 console.log("data", doc);
-                                 var newData = {
-                                     header: req.header,
-                                     message: req.message,
-                                     url: req.url
-                                 };
-                                 console.log("Sending message :" + newData);
-                                 triggerPushMsg(doc, JSON.stringify(newData));
-                             }
 
-                         });
-                     }
 
-                 });
-
-             }
          } else {
              //general notifications
              var cursor = myAwesomeDB.collection('UserPreferences').find({
@@ -289,7 +291,7 @@
      );
 
      var reqbody = req.body;
-     console.log(reqbody.appid);
+     // console.log(reqbody.appid);
 
      retrievefromDBBasedOn(reqbody);
      res.setHeader('Content-Type', 'application/json');
