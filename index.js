@@ -5,8 +5,9 @@ var bodyParser = require('body-parser')
 const webpush = require('web-push');
 var MongoClient = require("mongodb");
 var schedule = require('node-schedule');
+var cors = require('cors');
 
-
+app.use(cors());
 const vapidKeys = {
   publicKey:
  // 'BFxJHOL11hXZ6FlS27GI9R4idwWeT0R4QDlBeVLzculimGR9UE52iDKUn02-ez8-4ZFl5f2DqO-M19K8J_deYLc',
@@ -73,6 +74,7 @@ function savetoMongoDB(body) {
   var userPreferences = body.userPreferences;
 
   var objectId;
+  var subscriptionEndpoint=body.subscription.endpoint;
  myAwesomeDB.collection('Subscription').insertOne(data, function(err, res) {
     if (err) throw err;
     console.log("1 document inserted");
@@ -80,7 +82,7 @@ function savetoMongoDB(body) {
     objectId = data._id;
 
 console.log("objectId - " , objectId);
- var newData = {ref_id : objectId, userPreferences:userPreferences};
+ var newData = {ref_id : objectId, endpoint: subscriptionEndpoint, userPreferences:userPreferences};
   console.log("new data - " , newData);
  myAwesomeDB.collection('UserPreferences').insertOne(newData, function(err, res) {
     if (err) throw err;
@@ -225,6 +227,38 @@ app.post('/api/send-notification/', function (req, res) {
   return 123;  
 });
   
+
+app.post('/api/update-userpreferences/', function (req, res) {
+  var reqbody = req.body;
+
+  MongoClient.connect(MONGOLAB_URI, function(err, db){
+  if(err){
+    console.log(err);
+  }
+  const myAwesomeDB = db.db('subscription-datastore');
+  console.log("Endpoint from request: ", reqbody.endpoint);
+  var cursor = myAwesomeDB.collection('UserPreferences').find({"endpoint" : reqbody.endpoint});
+  
+  cursor.each(function(err, doc){
+    if(doc){
+    var oldPfgStatCookie = { "userPreferences.pfgStatCookie": "null" };
+    var newPfgStatCookie = { $set: { "userPreferences.pfgStatCookie": reqbody.pfgStatCookie } };
+
+    myAwesomeDB.collection('UserPreferences').updateOne(oldPfgStatCookie, newPfgStatCookie, function(err, res) {
+      if(err) { throw err; } 
+       console.log("updated pfgstatcookie: ");
+      db.close();
+    });
+    }
+  });
+})
+
+  res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify({ data: { success: true } }));
+  return 123;
+});
+
+
 app.post('/api/save-subscription/', function (req, res) {
   console.log('Inside save subscription2');
   saveSubscriptionToDatabase(req.body);

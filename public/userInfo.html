@@ -49,7 +49,7 @@
 		
 	</head>
 	
-	<body onload="readCookies()"> 		
+	<body onload="readSubscription()"> 		
 		<header class="navbar-principal-primary navbar-authenticated" data-navbar-principal-primary-persona="member" data-navbar-principal-primary-include-tier-two-in-mobile-menu="false" data-navbar-principal-primary-include-alert="false">    <nav class="navbar navbar-default navbar-static-top" role="navigation">        <div class="navbar-header">            <div class="container">                <div class="logo-full-tier1 visible-xs visible-sm visible-md">                    <a id="tsm-header-logo-mobile" href="https://secure05.principal.com/member/accounts" class="navbar-brand logo-full-white">Principal</a>                </div>                <ul class="mobile-nav-right visible-xs visible-sm visible-md">                    <li>                        <a id="tsm-header-logout-mobile" class="navbar-toggle mobile-nav-logout-btn" href="https://secure05.principal.com/auth/corp/logout.jsp">                            <i class="fa fa-user"></i>Log Out                        </a>                    </li>                    <li>                        <a class="navbar-toggle" data-toggle="collapse" data-target="#principal-primary-navbar">                            <i class="fa fa-navicon"></i>Menu                        </a>                    </li>                </ul>            </div>        </div>        <div class="container panel">            <div class="collapse navbar-collapse" id="principal-primary-navbar">                <ul class="nav navbar-nav navbar-left">                    <li class="hidden-xs hidden-sm logo-full-tier1">                        <a id="tsm-header-logo" class="logo-full-white" href="https://secure05.principal.com/member/accounts">Principal</a>                    </li>                    <li class="dropdown">                        <a id="tsm-header-my-accounts" class="visible-xs visible-sm visible-md" href="#">My Accounts</a>                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">                            <span class="hidden-xs hidden-sm hidden-md">My Accounts</span>                            <div class="dropdown-caret">&nbsp;</div>                        </a>                        <div class="dropdown-menu">                            <ul>                                <li class="dropdown-secondary">                                    <a id="tsm-header-overview" href="https://secure05.principal.com/member/accounts">Overview</a>                                </li>                                <ul class="principal-primary-navbar-account-list"></ul>                            </ul>                        </div>                    </li>                    <li>                        <a id="tsm-header-help" href="https://secure05.principal.com/allweb/docs/corporate/help.htm">Help</a>                    </li>                    <li class="visible-xs visible-sm visible-md">                        <a id="tsm-header-my-profile-mobile" href="https://secure05.principal.com/yourprofile/isea/member/yourprofile.jsp">My Profile</a>                    </li>                    <li class="principal-primary-navbar-msg-count visible-xs visible-sm visible-md">                        <a id="tsm-header-messages-mobile" href="https://secure05.principal.com/servlet/common/member/messagecenter">Messages</a>                    </li>                </ul>                <ul class="nav navbar-nav navbar-right hidden-xs hidden-sm hidden-md">                    <li>                        <a id="tsm-header-my-profile" href="https://secure05.principal.com/yourprofile/isea/member/yourprofile.jsp">My Profile</a>                    </li>                    <li class = "principal-primary-navbar-msg-count">                        <a id="tsm-header-messages" href="https://secure05.principal.com/servlet/common/member/messagecenter">Messages</a>                    </li>                    <li class="logout">                        <span>                            <a id="tsm-header-log-out" href="https://secure05.principal.com/auth/corp/logout.jsp" class="btn btn-primary navbar-btn">Log Out</a>                        </span>                    </li>                </ul>            </div>        </div>    </nav></header>
 		
 		<div class="bg-white">
@@ -1058,12 +1058,57 @@
 	<script src="//www.principalcdn.com/css/horizon/v2/horizon.min.js"></script>
 	<script type="text/javascript" src="/allweb/scripts/corporate/principal_dc_footer.js"></script>
 	<script type="text/javascript">
-		function readCookies(){
-			var pfgStatCookie = '99B4F0340206AF06C08E64';
-			document.cookie = "pfgStatCookie: 99B4F0340206AF06C08E64"
-			var x = document.cookie;
-			console.log("cookie: ", x);
-		}
+
+		function readSubscription(){
+ 		// We need the service worker registration to check for a subscription
+		navigator.serviceWorker.ready.then(function (reg) {
+   		 // Do we already have a push message subscription?
+    	reg.pushManager.getSubscription()
+        .then(function (subscription) {
+        	console.log("subscription: ", subscription);
+            if (!subscription) {
+                console.log('Not yet subscribed to Push')
+                isSubscribed = false;
+               
+            } else {
+                // initialize status, which includes setting UI elements for subscribed status
+                // and updating Subscribers list via push
+                console.log("isSubscribed: ", subscription.endpoint);
+                isSubscribed = true;
+                sendUpdatedUserPreferences(subscription);
+               
+            }
+        })
+        .catch(function (err) {
+            console.log('Error during getSubscription()', err);
+        });
+});
+
+ }
+
+ function sendUpdatedUserPreferences(subscription){
+ 	var preferences = {endpoint: subscription.endpoint, pfgStatCookie: 'thisismypfgstatcookie'};
+ 	console.log("preferences: " , JSON.stringify(preferences));
+ 	return fetch('/api/update-userpreferences/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(preferences)
+  })
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error('Bad status code from server.');
+    }
+
+    return response.json();
+  })
+  .then(function(responseData) {
+    if (!(responseData.data && responseData.data.success)) {
+      throw new Error('Bad response from server.');
+    }
+  });
+ }
 
 	</script>
 </body>

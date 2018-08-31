@@ -1466,18 +1466,11 @@
 }
     
   function showCategoryPopUp(){
-    var localstore = localStorage.getItem("lastname");
-    if (localstore == null){
-    localStorage.setItem("lastname", "Smith"); 
+    handlePermission();
   }
-  else{
-    alert(localstore);
-  }
-    //handlePermission();
-  }
-
 
 function handlePermission() {
+  console.log("handlePermission")
     return navigator.permissions
             .query({name:'notifications'})
             .then(permissionQuery);
@@ -1508,6 +1501,7 @@ function permissionQuery(result) {
     alert("You have blocked notifications from www.principal.com.\nIf you change your mind, please click on the padlock icon on the browser address bar and select Allow");
   }
   function checkStatus(selectedCategories) {
+    console.log("checkStatus");
   if (!('serviceWorker' in navigator)) {
   console.log('Service Worker isnt supported on this browser, disable or hide UI.');
   return;
@@ -1521,8 +1515,9 @@ console.log('Service worker is supported');
 registerServiceWorker(selectedCategories);
 
 }
+
 function registerServiceWorker(selectedCategories) {
-  console.log('Inside register service worker');
+  console.log('register service worker');
   return navigator.serviceWorker.register('service-worker.js')
   .then(function(registration) {
     console.log('Service worker successfully registered.');
@@ -1547,6 +1542,7 @@ function urlBase64ToUint8Array(base64String) {
 
 
 function subscribeUserToPush(selectedCategories) {
+  console.log("subscribeUserToPush");
   return navigator.serviceWorker.register('service-worker.js')
   .then(function(registration) {
     const subscribeOptions = {
@@ -1566,7 +1562,7 @@ function subscribeUserToPush(selectedCategories) {
 }
 
 function askPermission() {
-  console.log('Inside ask permission');
+  console.log('ask permission');
   return new Promise(function(resolve, reject) {
     const permissionResult = Notification.requestPermission(function(result) {
       resolve(result);
@@ -1587,7 +1583,9 @@ function askPermission() {
 
 
 function sendSubscriptionToBackEnd(subscription, selectedCategories) {
-  var subs = {subscription:subscription, userPreferences: {categories: selectedCategories, appId: 'app1'}};
+  console.log("sendSubscriptionToBackEnd");
+
+  var subs = {subscription:subscription, userPreferences: {categories: selectedCategories, appId: 'app1', pfgStatCookie: "null"}};
   return fetch('/api/save-subscription/', {
     method: 'POST',
     headers: {
@@ -1608,28 +1606,6 @@ function sendSubscriptionToBackEnd(subscription, selectedCategories) {
     }
   });
 }
-
-// We need the service worker registration to check for a subscription
-navigator.serviceWorker.ready.then(function (reg) {
-    // Do we already have a push message subscription?
-    reg.pushManager.getSubscription()
-        .then(function (subscription) {
-            if (!subscription) {
-                console.log('Not yet subscribed to Push')
-                isSubscribed = false;
-                
-            } else {
-                // initialize status, which includes setting UI elements for subscribed status
-                // and updating Subscribers list via push
-                console.log("subscribed: ", subscription.endpoint);
-                isSubscribed = true;
-                
-            }
-        })
-        .catch(function (err) {
-            console.log('Error during getSubscription()', err);
-        });
-});
 
 </script>
 <style type="text/css">
