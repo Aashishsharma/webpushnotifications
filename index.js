@@ -183,26 +183,28 @@
                              "$in": [req.category]
                          }
                      });
-                     cursor1.each(function(err, doc) {
-                         if (doc) {
+                     cursor1.each(function(err, doc1) {
+                         if (doc1) {
                              console.log("finding data");
-                             console.log(doc.ref_id);
+                             console.log(doc1.ref_id);
                              var cursor2 = myAwesomeDB.collection('Subscription').find({
                                  "_id": {
-                                     "$in": [doc.ref_id]
+                                     "$in": [doc1.ref_id]
                                  }
                              });
-                             cursor2.each(function(err, doc) {
-                                 if (doc) {
+                             cursor2.each(function(err, doc2) {
+                                 if (doc2) {
                                      console.log("finding data");
-                                     console.log("data", doc);
+                                     console.log("data", doc2);
                                      var newData = {
                                          header: req.header,
                                          message: req.message,
-                                         url: req.url
+                                         url: req.url,
                                      };
-                                     console.log("Sending message :" + newData);
-                                     triggerPushMsg(doc, JSON.stringify(newData));
+                                     console.log("Sending message :", newData);
+                                     console.log("Subscriber data :", doc2);
+
+                                     triggerPushMsg(doc2, JSON.stringify(newData));
                                  }
 
                              });
