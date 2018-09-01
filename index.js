@@ -317,7 +317,9 @@
          console.log("Endpoint from request: ", reqbody.endpoint);
          console.log(" reqbody.pfgStatCookie from request: ", reqbody.pfgStatCookie);
          var cursor = myAwesomeDB.collection('UserPreferences').find({
-             "endpoint": reqbody.endpoint
+             "endpoint": reqbody.endpoint, function (err, doc){
+                callback(err == null && doc != null);
+             }
          });
 
          cursor.each(function(err, doc) {
