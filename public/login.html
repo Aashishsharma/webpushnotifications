@@ -146,11 +146,10 @@
 function saveCookie() {
 	
     var returnVal = true;
-    alert(document.getElementById('userid').value);
+   
     userid  = document.getElementById('userid').value.toString();
-    alert(userid);
+   
     if(userid=="demoid01"){
-		alert('demoid01');
 		document.cookie = "pfgStatCookie = thisismypfgstatcookie1";
 	}else if(userid=="demoid02"){
 		document.cookie = "pfgStatCookie = thisismypfgstatcookie2";
