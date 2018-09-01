@@ -1431,7 +1431,7 @@
     <p>To secure your financial future</b></p>
     <input type="checkbox" name="category" value="retirement"> Retirement Solutions <br>
     <input type="checkbox" name="category" value="life"> Life<br>
-    <hiddenInput type="checkbox" name="category" value="general" checked></hiddenInput>
+    
     <input type="checkbox" name="category" value="sbd"> Speciality Benifits<br><br>
     
     <button type="button" id="button-not-interested" style= "width: auto;
@@ -1460,9 +1460,8 @@
         selectedCategories.push(checkboxes[i].defaultValue);
      }
   }
-  if(selectedCategories.length == 0){
-    selectedCategories[0] = 'general';
-  }
+  var len = selectedCategories.length;
+  selectedCategories[len] = 'general';
   document.getElementById('categoryPopUp').style.display = "none";
   checkStatus(selectedCategories);
 }
