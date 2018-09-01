@@ -315,6 +315,7 @@
          }
          const myAwesomeDB = db.db('subscription-datastore');
          console.log("Endpoint from request: ", reqbody.endpoint);
+         console.log(" reqbody.pfgStatCookie from request: ", reqbody.pfgStatCookie);
          var cursor = myAwesomeDB.collection('UserPreferences').find({
              "endpoint": reqbody.endpoint
          });
@@ -334,7 +335,7 @@
                      if (err) {
                          throw err;
                      }
-                     console.log("updated pfgstatcookie: ");
+                     console.log("updated pfgstatcookie");
                      db.close();
                  });
              }
