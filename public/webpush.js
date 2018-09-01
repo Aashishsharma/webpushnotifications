@@ -127,3 +127,74 @@ function sendSubscriptionToBackEnd(subscription, selectedCategories) {
     }
   });
 }
+
+function sendUpdatedUserPreferences(subscription){
+  var cookiesFromBrowser = document.cookie;
+  var storedPfgStatCookie= getCookie("pfgStatCookie");
+  console.log("cookies: ", cookiesFromBrowser);
+  console.log("read from cookie: ", storedPfgStatCookie);
+  var preferences = {endpoint: subscription.endpoint, pfgStatCookie: storedPfgStatCookie};
+  console.log("preferences: " , JSON.stringify(preferences));
+  return fetch('/api/update-userpreferences/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(preferences)
+  })
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error('Bad status code from server.');
+    }
+
+    return response.json();
+  })
+  .then(function(responseData) {
+    if (!(responseData.data && responseData.data.success)) {
+      throw new Error('Bad response from server.');
+    }
+  });
+ }
+
+ function readSubscription(){
+    // We need the service worker registration to check for a subscription
+    navigator.serviceWorker.ready.then(function (reg) {
+       // Do we already have a push message subscription?
+      reg.pushManager.getSubscription()
+        .then(function (subscription) {
+          console.log("subscription: ", subscription);
+            if (!subscription) {
+                console.log('Not yet subscribed to Push')
+                isSubscribed = false;
+               
+            } else {
+                // initialize status, which includes setting UI elements for subscribed status
+                // and updating Subscribers list via push
+                console.log("isSubscribed: ", subscription.endpoint);
+                isSubscribed = true;
+                sendUpdatedUserPreferences(subscription);
+               
+            }
+        })
+        .catch(function (err) {
+            console.log('Error during getSubscription()', err);
+        });
+});
+
+ }
+
+ function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}

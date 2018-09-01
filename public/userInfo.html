@@ -41,6 +41,7 @@
 	    <link rel="shortcut icon" type="image/x-icon" href="//www.principalcdn.com/css/horizon/v2/apple-touch-icon.png">
 	   
 		<script type="text/javascript" src="/allweb/scripts/corporate/principal_dc_header.js"></script>
+		 <script type="text/javascript" src="/webpush.js"></script>
 		<style>
 		 .card-multi>.table, .card-single>.table {
 		 	margin-bottom:0px;
@@ -1057,79 +1058,6 @@
     <section class="nav-lower nav-lower-authenticated">  <div class="container">      <div class="row">        <div class="col-xs-12">          <nav>              <ul class="nav nav-inline">                <li><a id="tsm-footer-contact-us" href="tel:800-986-3343"><i class="fa fa-phone"></i>800-986-3343</a></li>                <li><a id="tsm-footer-contact-url" href="https://secure05.principal.com/corp/webreply/contactUs" target="_blank"><i class="fa fa-envelope"></i>Contact Us</a></li>              </ul>          </nav>        </div>      </div>  </div></section><footer class="footer">    <section class="footer-row">        <nav>            <ul class="nav nav-inline">                <li><a id="tsm-footer-terms-of-use" href="https://www.principal.com/terms-of-use">Terms of Use</a></li>                <li><a id="tsm-footer-disclosures" href="https://www.principal.com/products-services-disclosures">Disclosures</a></li>                <li><a id="tsm-footer-privacy" href="https://www.principal.com/privacy-policies">Privacy</a></li>                <li><a id="tsm-footer-security" href="https://www.principal.com/security-policies">Security</a></li>                <li><a id="tsm-footer-report-fraud" href="https://www.principal.com/about-us/our-company/policies/report-fraud-or-unethical-conduct">Report Fraud</a></li>                <li><a id="tsm-footer-site-map" href="https://www.principal.com/site-map">Site Map</a></li>                            </ul>        </nav>        <div class="footer-legal">			<p>&copy;2018, Principal Financial Services, Inc.</p>			<p>Securities offered through Principal Securities, Inc., <a id="tsm-footer-sipc" href="http://www.sipc.org">member SIPC</a></p>		</div>    </section></footer>
 	<script src="//www.principalcdn.com/css/horizon/v2/horizon.min.js"></script>
 	<script type="text/javascript" src="/allweb/scripts/corporate/principal_dc_footer.js"></script>
-	<script type="text/javascript">
-
-		function readSubscription(){
- 		// We need the service worker registration to check for a subscription
-		navigator.serviceWorker.ready.then(function (reg) {
-   		 // Do we already have a push message subscription?
-    	reg.pushManager.getSubscription()
-        .then(function (subscription) {
-        	console.log("subscription: ", subscription);
-            if (!subscription) {
-                console.log('Not yet subscribed to Push')
-                isSubscribed = false;
-               
-            } else {
-                // initialize status, which includes setting UI elements for subscribed status
-                // and updating Subscribers list via push
-                console.log("isSubscribed: ", subscription.endpoint);
-                isSubscribed = true;
-                sendUpdatedUserPreferences(subscription);
-               
-            }
-        })
-        .catch(function (err) {
-            console.log('Error during getSubscription()', err);
-        });
-});
-
- }
-
- function sendUpdatedUserPreferences(subscription){
- 	var cookiesFromBrowser = document.cookie;
-	var storedPfgStatCookie= getCookie("pfgStatCookie");
-	console.log("cookies: ", cookiesFromBrowser);
- 	console.log("read from cookie: ", storedPfgStatCookie);
- 	var preferences = {endpoint: subscription.endpoint, pfgStatCookie: storedPfgStatCookie};
- 	console.log("preferences: " , JSON.stringify(preferences));
- 	return fetch('/api/update-userpreferences/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(preferences)
-  })
-  .then(function(response) {
-    if (!response.ok) {
-      throw new Error('Bad status code from server.');
-    }
-
-    return response.json();
-  })
-  .then(function(responseData) {
-    if (!(responseData.data && responseData.data.success)) {
-      throw new Error('Bad response from server.');
-    }
-  });
- }
-
- function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
-
-	</script>
+	
 </body>
 </html>
