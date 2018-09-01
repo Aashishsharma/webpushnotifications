@@ -10,6 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="content-language" content="en">
   <title>Insurance, Investments, and Retirement | Principal</title>
+  <script type="text/javascript" src="/webpush.js"></script>
   <script type="text/javascript" src="/dtagent_ICA23Vbgjrx_7000000251011.js" data-dtconfig="agentUri=/dtagent_ICA23Vbgjrx_7000000251011.js|rid=RID_2418|rpid=-865256705|domain=principal.com|ssc=1|bandwidth=1800|lastModification=1531375906479|lab=1|tp=500,50,0,1|reportUrl=dynaTraceMonitor|app=CSS_GCBI_pcom_homepage"></script><link type="text/css" rel="stylesheet" href="https://www.principalcdn.com/css/horizon/v2/horizon.min.css" media="all" />
 <link type="text/css" rel="stylesheet" href="https://www.principalcdn.com/css/horizon/addons/coveo-searchbox/v1/horizon-coveo-searchbox.min.css" media="all" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -1469,162 +1470,30 @@
   function showCategoryPopUp(){
     handlePermission();
   }
-
-function handlePermission() {
-  console.log("handlePermission")
-    return navigator.permissions
-            .query({name:'notifications'})
-            .then(permissionQuery);
-}
-
-function permissionQuery(result) {
-    console.debug({result});
-    var newPrompt;
-
-    if (result.state == 'granted') {
-       console.log('granted');
-
-    } else if (result.state == 'prompt') {
-         document.getElementById('categoryPopUp').style.display = "block";
-
-    } else if (result.state == 'denied') {
-        console.log('naah');
-    }
-
-   }
-
   function closeCategoryPopUp(){
     document.getElementById('categoryPopUp').style.display = "none";
     showAlertForFuture();
   }
 
-  function showAlertForFuture(){
+   function showAlertForFuture(){
     alert("You have blocked notifications from www.principal.com.\nIf you change your mind, please click on the padlock icon on the browser address bar and select Allow");
   }
-  function checkStatus(selectedCategories) {
-    console.log("checkStatus");
-  if (!('serviceWorker' in navigator)) {
-  console.log('Service Worker isnt supported on this browser, disable or hide UI.');
-  return;
-}
-
-if (!('PushManager' in window)) {
-    console.log('Service Worker isnt supported on this browser, disable or hide UI.');
-  return;
-}
-console.log('Service worker is supported');
-registerServiceWorker(selectedCategories);
-
-}
-
-function registerServiceWorker(selectedCategories) {
-  console.log('register service worker');
-  return navigator.serviceWorker.register('service-worker.js')
-  .then(function(registration) {
-    console.log('Service worker successfully registered.');
-    askPermission();
-    subscribeUserToPush(selectedCategories);
-    return registration;
-  })
-  .catch(function(err) {
-    console.error('Unable to register service worker.', err);
-  });
-}
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/')
-  ;
-  const rawData = window.atob(base64);
-  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
-}
-
-
-function subscribeUserToPush(selectedCategories) {
-  console.log("subscribeUserToPush");
-  return navigator.serviceWorker.register('service-worker.js')
-  .then(function(registration) {
-    const subscribeOptions = {
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        'BIY6zwhkwWk68u5Xzh_NYKwEzsEpOLsSSEdxDHLZWaGWEQOvAWpZ8iJJEqJof2y6BnIxNrPFo4v3tGO4wbkyywY'
-      )
-    };
-
-    return registration.pushManager.subscribe(subscribeOptions);
-  })
-  .then(function(pushSubscription) {
-    sendSubscriptionToBackEnd(pushSubscription, selectedCategories);
-    console.log('Received PushSubscription: ', JSON.stringify(pushSubscription));
-    return pushSubscription;
-  });
-}
-
-function askPermission() {
-  console.log('ask permission');
-  return new Promise(function(resolve, reject) {
-    const permissionResult = Notification.requestPermission(function(result) {
-      resolve(result);
-    });
-
-    if (permissionResult) {
-      permissionResult.then(resolve, reject);
-    }
-  })
-  .then(function(permissionResult) {
-    if (permissionResult !== 'granted') {
-      showAlertForFuture();
-      throw new Error('We weren\'t granted permission.');
-    }
-  });
-}
-
-
-
-function sendSubscriptionToBackEnd(subscription, selectedCategories) {
-  console.log("sendSubscriptionToBackEnd");
-
-  var subs = {subscription:subscription, userPreferences: {categories: selectedCategories, appId: 'app1', pfgStatCookie: "null"}};
-  return fetch('/api/save-subscription/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(subs) 
-  })
-  .then(function(response) {
-    if (!response.ok) {
-      throw new Error('Bad status code from server.');
-    }
-
-    return response.json();
-  })
-  .then(function(responseData) {
-    if (!(responseData.data && responseData.data.success)) {
-      throw new Error('Bad response from server.');
-    }
-  });
-}
-
 </script>
 <style type="text/css">
-  .modal {
-   
-   top: 7%;
+  .modal {	
+   top: 5%;
    right: 60%;
    bottom: 0;
-   left: 0px;
+   left: 0;
    z-index: 10040;
    overflow: auto;
    overflow-y: auto;
-   width: auto;
+   width: auto;	
 }
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: #fefefe;
+    background-color: #fefefe ;
     margin: 5% auto; /* 15% from the top and centered */
     padding: 7px;
     border: 1px solid #888;
@@ -1632,20 +1501,6 @@ function sendSubscriptionToBackEnd(subscription, selectedCategories) {
     font-size: 12px;
 }
 
-/* The Close Button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
 </style>
 </body>
 </html>
