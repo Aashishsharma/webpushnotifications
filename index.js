@@ -321,7 +321,6 @@
                 callback(err == null && doc != null);
              }
          });
-        console.doc("",cursor);
          cursor.each(function(err, doc) {
              if (doc) {
                  var oldPfgStatCookie = {
@@ -333,12 +332,9 @@
                      }
                  };
 
-                 myAwesomeDB.collection('UserPreferences').updateOne(oldPfgStatCookie, newPfgStatCookie, function(err, res) {
-                     if (err) {
-                         throw err;
-                     }
-                     console.log("updated pfgstatcookie");
-                 });
+                 myAwesomeDB.collection('UserPreferences').updateOne(oldPfgStatCookie, newPfgStatCookie, function (err, doc){
+                 callback(err == null && doc != null);
+                });
              }
          });
      })
