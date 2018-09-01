@@ -1428,11 +1428,11 @@
   <div class="modal-content">
    
     <b><p><h6>Subscribe to Principal.com</h6></p>
-    <p>To know everything about your financial security</b></p>
-    <input type="checkbox" name="category" value="retirement"> Retirement Solutions
-    <input type="checkbox" name="category" value="life" style="margin-left: 10px;"> Life<br>
-    <input type="checkbox" name="category" value="sbd"> Speciality Benifits
-    <input type="checkbox" name="category" value="general" style="margin-left: 28px;"> General Updates<br><br>
+    <p>To secure your financial future</b></p>
+    <input type="checkbox" name="category" value="retirement"> Retirement Solutions <br>
+    <input type="checkbox" name="category" value="life"> Life<br>
+    <hiddenInput type="checkbox" name="category" value="general" checked="true"></hiddenInput>
+    <input type="checkbox" name="category" value="sbd"> Speciality Benifits<br><br>
     
     <button type="button" id="button-not-interested" style= "width: auto;
     height: 20px; background-color:#a6a6a6; color: #ffffff; border-radius: 5px;" onclick="closeCategoryPopUp()"> I'll subscribe later</button>
@@ -1480,25 +1480,22 @@
   }
 </script>
 <style type="text/css">
-  .modal {	
-   top: 5%;
-   right: 60%;
-   bottom: 0;
-   left: 0;
+.modal {
+   
+   padding-top: 60px;
    z-index: 10040;
-   overflow: auto;
-   overflow-y: auto;
-   width: auto;	
+   width: 350px;
+   padding-left: 1%;
 }
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: #fefefe ;
-    margin: 5% auto; /* 15% from the top and centered */
-    padding: 7px;
+    background-color: #fefefe;
+   
     border: 1px solid #888;
-    width: 75%; /* Could be more or less, depending on screen size */
+   
     font-size: 12px;
+    padding: 10px;
 }
 
 </style>
