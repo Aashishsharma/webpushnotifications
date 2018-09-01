@@ -1087,7 +1087,9 @@
  }
 
  function sendUpdatedUserPreferences(subscription){
- 	var preferences = {endpoint: subscription.endpoint, pfgStatCookie: 'thisismypfgstatcookie'};
+ 	var pfgStatCookieFromBrowser = document.cookie.pfgStatCookie;
+ 	console.log("read from cookie: ", pfgStatCookieFromBrowser);
+ 	var preferences = {endpoint: subscription.endpoint, pfgStatCookie: pfgStatCookieFromBrowser};
  	console.log("preferences: " , JSON.stringify(preferences));
  	return fetch('/api/update-userpreferences/', {
     method: 'POST',

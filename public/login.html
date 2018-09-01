@@ -143,58 +143,23 @@
 <script language="javascript" type="text/javascript" charset="UTF-8">
     
 
-function validateFields() {
+function saveCookie() {
 	
     var returnVal = true;
-    var msg = "";
-	var username = document.getElementById("userid");
-	var pass = document.getElementById("pass");
-	var userid = username.value;
-	var password = pass.value;
-	var employer = 2 == 5;
-	var forgotErac = 2 < 5;
-	
-	userid = trimstring(userid);
-	password = trimstring(password);
-	username.value = userid;
-	pass.value = password;
-	
-	var loginIdLbl = "Username";
-	var loginPassLbl = "Password";
-	
-	if (userid == '') {
-		alert("Please enter your username.");
-		username.focus();
-		return false;
-	}else if (password == ''){
-		alert("Please enter your password.");	
-		pass.focus();
-		return false;	
-	}
-	
-	if (!isValidLoginId(userid,loginIdLbl)) {
-		elem.focus();
-		return false;
-		}
-	
-	if(employer == true && forgotErac != true){
-		
-		var eracId = document.getElementById("eracId");
-		var erac = eracId.value;
-		
-		erac = trimstring(erac);
-		eracId.value = erac;
-		
-		if (erac == '') {
-			alert("Please enter your employer access code.");
-			eracId.focus();
-			return false;
-		}	
+    alert(document.getElementById('userid').value);
+    userid  = document.getElementById('userid').value.toString();
+    alert(userid);
+    if(userid=="demoid01"){
+		alert('demoid01');
+		document.cookie = "pfgStatCookie = thisismypfgstatcookie1";
+	}else if(userid=="demoid02"){
+		document.cookie = "pfgStatCookie = thisismypfgstatcookie2";
+	}else if(userid=="demoid03"){
+		document.cookie = "pfgStatCookie = thisismypfgstatcookie3";
+	}else if(userid=="demoid04"){
+		document.cookie = "pfgStatCookie = thisismypfgstatcookie4";
 	}
 
-    //Disable multiple submits
-	document.getElementById("loginBtn").disabled = true;
-    
 	return returnVal;	
 }
 
@@ -220,7 +185,7 @@ function validateFields() {
    <div class="signOn" id="signOnCreds" >
    
       <form autocomplete="off" name="signon" id="signon"  action="/userInfo.html"
-            onsubmit="javascript:return validateFields();">
+            onsubmit="javascript:return saveCookie();">
         
         
         <input type="hidden" id="fk" name="fk" value="1166999_c2a6a996aeb72d4932c94314929b9be8afb59879668f340ae2c5b6c513733b07"/>
