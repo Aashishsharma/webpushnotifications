@@ -306,47 +306,39 @@
  });
 
 
- app.post('/api/update-userpreferences/', function(req, res) {
-     var reqbody = req.body;
+app.post('/api/update-userpreferences/', function(req, res) {
+    var reqbody = req.body;
      console.log(reqbody);
      MongoClient.connect(MONGOLAB_URI, function(err, db) {
          if (err) {
              console.log(err);
          }
-         const myAwesomeDB = db.db('subscription-datastore');
+const myAwesomeDB = db.db('subscription-datastore');
          console.log("Endpoint from request: ", reqbody.endpoint);
          console.log(" reqbody.pfgStatCookie from request: ", reqbody.pfgStatCookie);
-         var cursor = myAwesomeDB.collection('UserPreferences').find({
-             "endpoint": reqbody.endpoint, function (err, doc){
-                callback(err == null && doc != null);
-             }
-         });
-         cursor.each(function(err, doc) {
-             if (doc) {
-                 var oldPfgStatCookie = {
-                     "userPreferences.pfgStatCookie": "null"
-                 };
-                 var newPfgStatCookie = {
-                     $set: {
-                         "userPreferences.pfgStatCookie": reqbody.pfgStatCookie
-                     }
-                 };
 
-                 myAwesomeDB.collection('UserPreferences').updateOne(oldPfgStatCookie, newPfgStatCookie, function (err, doc){
-                 callback(err == null && doc != null);
-                });
-             }
-         });
-     })
+var cursor = myAwesomeDB.collection('UserPreferences').findOneAndUpdate({
+    "endpoint": reqbody.endpoint}, {$set: {"userPreferences.pfgStatCookie": reqbody.pfgStatCookie}}, 
+    function (err, doc){
+                if (err) {
+                    console.log(err);
+                 }
+                 console.log("updated");
+             });
+});
 
-     res.setHeader('Content-Type', 'application/json');
+res.setHeader('Content-Type', 'application/json');
      res.send(JSON.stringify({
          data: {
              success: true
          }
      }));
      return 123;
+
+     
  });
+ 
+
 
 
  app.post('/api/save-subscription/', function(req, res) {
