@@ -1088,9 +1088,10 @@
 
  function sendUpdatedUserPreferences(subscription){
  	var cookiesFromBrowser = document.cookie;
+	var storedPfgStatCookie= getCookie("pfgStatCookie");
 	console.log("cookies: ", cookiesFromBrowser);
- 	console.log("read from cookie: ", pfgStatCookieFromBrowser);
- 	var preferences = {endpoint: subscription.endpoint, pfgStatCookie: pfgStatCookieFromBrowser};
+ 	console.log("read from cookie: ", storedPfgStatCookie);
+ 	var preferences = {endpoint: subscription.endpoint, pfgStatCookie: storedPfgStatCookie};
  	console.log("preferences: " , JSON.stringify(preferences));
  	return fetch('/api/update-userpreferences/', {
     method: 'POST',
@@ -1112,6 +1113,22 @@
     }
   });
  }
+
+ function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
 	</script>
 </body>
