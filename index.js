@@ -308,7 +308,7 @@
 
  app.post('/api/update-userpreferences/', function(req, res) {
      var reqbody = req.body;
-
+     console.log(reqbody);
      MongoClient.connect(MONGOLAB_URI, function(err, db) {
          if (err) {
              console.log(err);
