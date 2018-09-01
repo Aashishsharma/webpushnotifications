@@ -1088,7 +1088,7 @@
 
  function sendUpdatedUserPreferences(subscription){
  	var cookiesFromBrowser = document.cookie;
-	var pfgStatCookieFromBrowser = cookiesFromBrowser.get("pfgStatCookie");
+	console.log("cookies: ", cookiesFromBrowser);
  	console.log("read from cookie: ", pfgStatCookieFromBrowser);
  	var preferences = {endpoint: subscription.endpoint, pfgStatCookie: pfgStatCookieFromBrowser};
  	console.log("preferences: " , JSON.stringify(preferences));
