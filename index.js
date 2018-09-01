@@ -321,7 +321,7 @@
                 callback(err == null && doc != null);
              }
          });
-
+        console.doc("",cursor);
          cursor.each(function(err, doc) {
              if (doc) {
                  var oldPfgStatCookie = {
@@ -338,7 +338,6 @@
                          throw err;
                      }
                      console.log("updated pfgstatcookie");
-                     db.close();
                  });
              }
          });
