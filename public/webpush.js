@@ -1,5 +1,5 @@
 function handlePermission() {
-  console.log("handlePermission")
+ /* console.log("handlePermission")
     return navigator.permissions
             .query({name:'notifications'})
             .then(permissionQuery);
@@ -17,7 +17,11 @@ function permissionQuery(result) {
 
     } else if (result.state == 'denied') {
         console.log('denied');
-    }
+    }*/
+  if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+    console.log('For Microsoft edge test');
+    document.getElementById('categoryPopUp').style.display = "block";
+  }
 
    }
 
